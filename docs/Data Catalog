@@ -1,1 +1,70 @@
+# 📊 Data Catalog
 
+A structured reference of all datasets used in this project.
+
+---
+
+## 🗂️ Overview
+
+This document lists all datasets involved in the project, including:
+- Data sources and formats
+- Schema (columns, types, notes)
+- Sample sizes
+- Update frequency
+
+---
+
+## 📁 Datasets
+
+### 1. `users.csv`
+- **Source**: Internal user management system
+- **Description**: Contains user profile and activity metadata.
+- **Fields**:
+  | Column Name   | Data Type | Description                      |
+  |---------------|-----------|----------------------------------|
+  | `user_id`     | String    | Unique identifier                |
+  | `username`    | String    | Username                         |
+  | `email`       | String    | User email                       |
+  | `created_at`  | DateTime  | Account creation timestamp       |
+- **Size**: ~5,000 records
+- **Update Frequency**: Daily
+
+---
+
+### 2. `products.csv`
+- **Source**: Product database export
+- **Description**: List of all products and attributes.
+- **Fields**:
+  | Column Name   | Data Type | Description                      |
+  |---------------|-----------|----------------------------------|
+  | `product_id`  | String    | Unique product code              |
+  | `name`        | String    | Product name                     |
+  | `category`    | String    | Category tag                     |
+  | `price`       | Float     | Price in INR                     |
+- **Size**: ~500 records
+- **Update Frequency**: Weekly
+
+---
+
+### 3. `sales.csv`
+- **Source**: Transaction logs from order processing system
+- **Description**: Tracks all completed purchases.
+- **Fields**:
+  | Column Name    | Data Type | Description                          |
+  |----------------|-----------|--------------------------------------|
+  | `order_id`     | String    | Order number                         |
+  | `user_id`      | String    | FK to `users.csv`                    |
+  | `product_id`   | String    | FK to `products.csv`                 |
+  | `amount`       | Float     | Transaction amount                   |
+  | `timestamp`    | DateTime  | Purchase date and time               |
+- **Size**: ~25,000 records
+- **Update Frequency**: Real-time sync
+
+---
+
+## 🔄 Data Flow
+
+_Include a diagram here if available. For example:_
+
+```text
+users.csv ---> sales.csv <--- products.csv
