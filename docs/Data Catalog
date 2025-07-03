@@ -60,11 +60,4 @@ This document lists all datasets involved in the project, including:
 - **Size**: ~25,000 records
 - **Update Frequency**: Real-time sync
 
----
 
-## 🔄 Data Flow
-
-_Include a diagram here if available. For example:_
-
-```text
-users.csv ---> sales.csv <--- products.csv
