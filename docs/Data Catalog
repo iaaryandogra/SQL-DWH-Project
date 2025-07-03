@@ -1,63 +1,113 @@
-# 📊 Data Catalog
+# 🗂️ Data Catalog
 
-A structured reference of all datasets used in this project.
-
----
-
-## 🗂️ Overview
-
-This document lists all datasets involved in the project, including:
-- Data sources and formats
-- Schema (columns, types, notes)
-- Sample sizes
-- Update frequency
+This document outlines all the key data tables used in this project, along with their schema, descriptions, and relationships. It serves as a reference for understanding the data pipeline, transformations, and storage architecture used in the SQL Data Warehouse Project.
 
 ---
 
-## 📁 Datasets
+## 📁 Source Data Tables
 
-### 1. `users.csv`
-- **Source**: Internal user management system
-- **Description**: Contains user profile and activity metadata.
-- **Fields**:
-  | Column Name   | Data Type | Description                      |
-  |---------------|-----------|----------------------------------|
-  | `user_id`     | String    | Unique identifier                |
-  | `username`    | String    | Username                         |
-  | `email`       | String    | User email                       |
-  | `created_at`  | DateTime  | Account creation timestamp       |
-- **Size**: ~5,000 records
-- **Update Frequency**: Daily
-
----
-
-### 2. `products.csv`
-- **Source**: Product database export
-- **Description**: List of all products and attributes.
-- **Fields**:
-  | Column Name   | Data Type | Description                      |
-  |---------------|-----------|----------------------------------|
-  | `product_id`  | String    | Unique product code              |
-  | `name`        | String    | Product name                     |
-  | `category`    | String    | Category tag                     |
-  | `price`       | Float     | Price in INR                     |
-- **Size**: ~500 records
-- **Update Frequency**: Weekly
+### 1. `customers`
+| Column Name     | Data Type | Description                     |
+|------------------|------------|---------------------------------|
+| customer_id      | INT        | Unique ID for each customer     |
+| first_name       | VARCHAR    | Customer's first name           |
+| last_name        | VARCHAR    | Customer's last name            |
+| email            | VARCHAR    | Customer's email address        |
+| gender           | VARCHAR    | Gender of the customer          |
+| address          | VARCHAR    | Full address                    |
+| city             | VARCHAR    | City name                       |
+| state            | VARCHAR    | State name                      |
+| zip_code         | VARCHAR    | Postal/ZIP code                 |
+| created_at       | TIMESTAMP  | Date when the customer joined   |
 
 ---
 
-### 3. `sales.csv`
-- **Source**: Transaction logs from order processing system
-- **Description**: Tracks all completed purchases.
-- **Fields**:
-  | Column Name    | Data Type | Description                          |
-  |----------------|-----------|--------------------------------------|
-  | `order_id`     | String    | Order number                         |
-  | `user_id`      | String    | FK to `users.csv`                    |
-  | `product_id`   | String    | FK to `products.csv`                 |
-  | `amount`       | Float     | Transaction amount                   |
-  | `timestamp`    | DateTime  | Purchase date and time               |
-- **Size**: ~25,000 records
-- **Update Frequency**: Real-time sync
+### 2. `orders`
+| Column Name     | Data Type | Description                         |
+|------------------|------------|-------------------------------------|
+| order_id         | INT        | Unique ID for each order            |
+| customer_id      | INT        | Foreign key to `customers` table    |
+| order_date       | DATE       | Date when order was placed          |
+| ship_date        | DATE       | Date when order was shipped         |
+| status           | VARCHAR    | Order status (shipped, pending)     |
+| total_amount     | DECIMAL    | Total value of the order            |
 
+---
+
+### 3. `products`
+| Column Name     | Data Type | Description                       |
+|------------------|------------|-----------------------------------|
+| product_id       | INT        | Unique ID for each product        |
+| product_name     | VARCHAR    | Name of the product               |
+| category         | VARCHAR    | Product category                  |
+| sub_category     | VARCHAR    | Product sub-category              |
+| price            | DECIMAL    | Selling price per unit            |
+
+---
+
+### 4. `order_items`
+| Column Name     | Data Type | Description                              |
+|------------------|------------|------------------------------------------|
+| order_item_id    | INT        | Unique ID for the order item             |
+| order_id         | INT        | Foreign key to `orders` table            |
+| product_id       | INT        | Foreign key to `products` table          |
+| quantity         | INT        | Quantity of product ordered              |
+| item_price       | DECIMAL    | Price at the time of order               |
+
+---
+
+## 📦 Data Warehouse (Fact & Dimension Tables)
+
+### ⭐ Fact Table: `fact_sales`
+| Column Name     | Data Type | Description                          |
+|------------------|------------|--------------------------------------|
+| sales_id         | INT        | Unique sales transaction ID          |
+| date_key         | DATE       | Date of sale                         |
+| customer_key     | INT        | Reference to `dim_customers`         |
+| product_key      | INT        | Reference to `dim_products`          |
+| quantity_sold    | INT        | Number of items sold                 |
+| total_amount     | DECIMAL    | Total revenue for the transaction    |
+
+---
+
+### 📐 Dimension Table: `dim_customers`
+| Column Name     | Data Type | Description                        |
+|------------------|------------|------------------------------------|
+| customer_key     | INT        | Surrogate key for customer         |
+| full_name        | VARCHAR    | Customer's full name               |
+| city             | VARCHAR    | City of residence                  |
+| state            | VARCHAR    | State of residence                 |
+
+---
+
+### 📐 Dimension Table: `dim_products`
+| Column Name     | Data Type | Description                          |
+|------------------|------------|--------------------------------------|
+| product_key      | INT        | Surrogate key for product            |
+| product_name     | VARCHAR    | Name of the product                  |
+| category         | VARCHAR    | Category of the product              |
+| sub_category     | VARCHAR    | Sub-category of the product          |
+
+---
+
+### 🧮 Relationships
+
+- `orders.customer_id` → `customers.customer_id`
+- `order_items.order_id` → `orders.order_id`
+- `order_items.product_id` → `products.product_id`
+- `fact_sales.customer_key` → `dim_customers.customer_key`
+- `fact_sales.product_key` → `dim_products.product_key`
+
+---
+
+## 🧰 Usage Notes
+
+- All transformations are handled in the staging layer using SQL scripts.
+- Data is loaded from CSV sources into staging tables, then transformed into dimensional models.
+- Timestamps are converted to date keys using standard format `YYYY-MM-DD`.
+
+---
+
+## 📅 Last Updated
+**July 3, 2025**
 
