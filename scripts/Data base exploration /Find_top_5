@@ -1,0 +1,21 @@
+-- WHICH 5 PRODUCTS GENERATE THE HIGHEST REVENUE
+SELECT 
+  p.Product_name,                           -- Product name from product dimension
+  SUM(f.sales_amount) AS total_revenue      -- Total revenue per product
+FROM gold.facts_sales f 
+LEFT JOIN gold.dim_products p               -- ✅ Using alias 'p' for products
+  ON p.product_key = f.product_key          -- Join on product key
+GROUP BY p.Product_name                     -- Group by product name
+ORDER BY total_revenue DESC                -- Sort by revenue, highest first
+LIMIT 5;
+
+-- WHAT ARE THE 5 WORST PERFORMING PRODUCTS IN TERMS OF SALES
+SELECT 
+  p.Product_name,                           -- Product name from product dimension
+  SUM(f.sales_amount) AS total_revenue      -- Total revenue per product
+FROM gold.facts_sales f 
+LEFT JOIN gold.dim_products p               -- ✅ Using alias 'p' for products
+  ON p.product_key = f.product_key          -- Join on product key
+GROUP BY p.Product_name                     -- Group by product name
+ORDER BY total_revenue                      -- Sort by revenue, highest first
+LIMIT 5;
