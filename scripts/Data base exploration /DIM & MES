@@ -1,0 +1,35 @@
+-- FIND THE TOTAL SALES 
+SELECT SUM(sales_amount)AS Total_sales FROM gold.facts_sales;
+
+-- FIND HOW MANY ITEMS ARE SOLD
+SELECT SUM(quantity) AS total_quantity FROM gold.facts_sales;
+
+-- FIND THE AVERAGE SELLING PRICE 
+SELECT AVG(sls_price) AS avg_selling_price FROM gold.facts_sales;
+
+-- FIND THE TOTAL NUMBER OF ORDERS 
+SELECT COUNT(DISTINCT order_number) AS total_orders FROM gold.facts_sales;
+
+-- FIND THE TOTAL NUMBER OF PRODUCTS 
+SELECT COUNT(Product_key) AS total_products FROM gold.dim_products;
+
+-- FIND THE TOTAL NUMBER OF CUSTOMERS 
+SELECT COUNT(customer_key) AS total_customers FROM gold.dim_customer;
+
+-- FIND THE TOTAL NUMBER OF CUSTOMERS THAT HAVE PLACED AN ORDER 
+SELECT COUNT(DISTINCT customer_key) AS total_customers FROM gold.facts_sales;
+
+
+-- GENERATE A REPORT THAT SHOWS ALL KEY METRIC OF THE BUSINESS 
+
+SELECT 'TOTAL SALES' AS measure_name , SUM(sales_amount) FROM gold.facts_sales
+UNION ALL 
+SELECT 'TOTAL QUANTITY' AS measure_quantity , SUM(quantity) FROM gold.facts_sales
+UNION ALL
+SELECT 'TOTAL PRICE 'AS measure_price, AVG(sls_price) FROM gold.facts_sales
+UNION ALL
+SELECT 'TOTAL ORDER ' AS measure_order ,	COUNT(DISTINCT order_number) FROM gold.facts_sales
+UNION ALL
+SELECT 'TOTAL PRODUCTS 'AS measure_product ,COUNT(Product_key) FROM gold.dim_products
+UNION ALL
+SELECT 'TOTAL CUSTOMERS ' AS total_customer ,   COUNT(customer_key)  FROM gold.dim_customer;
